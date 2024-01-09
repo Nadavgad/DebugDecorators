@@ -1,73 +1,61 @@
+import traceback
+
+
 def debug(func):
     """
-    A decorator that prints input arguments, calls the decorated function,
-    prints the result, and handles exceptions by printing the exception details.
+    Decorator that prints information about the function call. It also prints the
+    returned result if the function call is successful. If an exception occurs
+    during the function call, it prints a traceback and the exception message.
 
     :param func: The function to be decorated.
     :return: The decorated function.
     """
 
-    def wrapper(*args, **kwargs):
+    def module(*args, **kwargs):
         """
-        Wrapper function that prints input arguments, calls the decorated function,
-        prints the result, and handles exceptions by printing the exception details.
+        The decorated function that wraps the original function.
 
-        :param args: Positional arguments passed to the decorated function.
-        :param kwargs: Keyword arguments passed to the decorated function.
-        :return: The result of the decorated function.
+        :param args: Positional arguments passed to the original function.
+        :param kwargs: Keyword arguments passed to the original function.
+        :return: The result of the original function.
         """
-        print(f"{func.__name__} got {args} {kwargs}")
+        try:
+            result = func(*args, **kwargs)
+            print(f"{func.__name__} got {args} {kwargs}")
+            print(f"returned: {result}\n")
+            return result
+        except Exception as e:
+            print(f"raised: {e}")
+            traceback.print_exc()
 
-        results = []
-        for arg in args:
-            try:
-                result = func(arg, **kwargs)
-                results.append(result)
-                print(f"returned: {result}")
-            except Exception as e:
-                print(f"Raised: {type(e).__name__} - {e}")
-        return results
-
-    return wrapper
-
-
-@debug
-def div2(n):
-    """
-    Function that performs division by 2.
-
-    :param n: The numerator.
-    :return: The result of the division.
-    """
-    return n / 2
+    return module
 
 
 @debug
 def div0(n):
     """
-    Function that raises a ZeroDivisionError for demonstration purposes.
+    A function that attempts to perform integer division by zero.
 
-    :param n: The numerator.
-    :return: The result of the division (will not be reached in this example).
+    :param n: The numerator for the division operation.
+    :return: The result of the division if successful , if not exception will execute
     """
-    return n / 0
+    print(f">>> div0({n})")
+    return n // 0
 
 
-# Test
-try:
-    div2_results = div2(4, 10)
-    print(div2_results)
-except Exception as e:
-    print(f"Error: {type(e).__name__} - {e}")
+@debug
+def div2(n):
+    """
+    A function that performs integer division by 2.
 
-try:
-    div2_result_zero = div2(0)
-    print(div2_result_zero)
-except Exception as e:
-    print(f"Error: {type(e).__name__} - {e}")
+    :param n: The number for the division operation.
+    :return: The result of the division.
+    """
+    print(f">>> div2({n})")
+    return int(n / 2)
 
-try:
-    div0_result = div0(10, 3)
-    print(div0_result)
-except Exception as e:
-    print(f"Error: {type(e).__name__} - {e}")
+
+# Test cases
+div2_result = div2(10)
+
+div0_result = div0(10)
